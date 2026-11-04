@@ -1,0 +1,26 @@
+---
+// src/components/CeremoniaCivil.astro
+// La recepción: solo los datos. El diseño está en TarjetaLugar, el mismo
+// de la ceremonia religiosa.
+import TarjetaLugar from "./TarjetaLugar.astro";
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Recepción Social";
+const lugar = "Salón de Eventos Rossy";
+const direccion = "Villa 1ro de Mayo, Calle 4 Oeste";
+const hora = "18:30 hrs.";
+const enlaceMapa = "https://maps.app.goo.gl/Hg85EtbwW8onBBtq9";
+const textoBoton = "Ver ubicación";
+// ──────────────────────────────────────────────────────────────
+---
+
+<TarjetaLugar
+    id="ceremonia-civil"
+    titulo={titulo}
+    icono="recepcion.png"
+    lugar={lugar}
+    direccion={direccion}
+    hora={hora}
+    enlaceMapa={enlaceMapa}
+    textoBoton={textoBoton}
+/>

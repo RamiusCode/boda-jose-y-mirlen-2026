@@ -1,0 +1,27 @@
+---
+// src/components/DireccionCeremonia.astro
+// La ceremonia religiosa: solo los datos. El diseño está en TarjetaLugar.
+import TarjetaLugar from "./TarjetaLugar.astro";
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Ceremonia Religiosa";
+const lugar = "Parroquia Sagrados Corazón de Jesús y María";
+const direccion = "Av. Cumavi / Calle San Francisco";
+const hora = "15:30 hrs.";
+// Búsqueda provisoria en Google Maps: reemplazar por el enlace exacto
+const enlaceMapa =
+    "https://www.google.com/maps/search/?api=1&query=Parroquia+Sagrados+Corazones+de+Jes%C3%BAs+y+Mar%C3%ADa+Av+Cumavi+Santa+Cruz+Bolivia";
+const textoBoton = "Ver ubicación";
+// ──────────────────────────────────────────────────────────────
+---
+
+<TarjetaLugar
+    id="ceremonia"
+    titulo={titulo}
+    icono="iglesia.png"
+    lugar={lugar}
+    direccion={direccion}
+    hora={hora}
+    enlaceMapa={enlaceMapa}
+    textoBoton={textoBoton}
+/>

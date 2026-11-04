@@ -1,0 +1,144 @@
+---
+// src/components/CodigoVestimenta.astro
+// Código de vestimenta, suelto sobre el papel y sin marco: título dorado en
+// Great Vibes, el adorno, las siluetas dorados de los novios, y la etiqueta
+// en Charm dorado. Un ramo dorado asoma a cada costado de las siluetas.
+import Adorno from "./Adorno.astro";
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Código de vestimenta";
+const etiqueta = "Formal - Elegante";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="vestimenta" class="vestimenta">
+    <h2 class="titulo font-great-vibes">{titulo}</h2>
+    <Adorno class="adorno" />
+
+    <div class="escena">
+        <img
+            src="/imagenes/lateral-izq.png"
+            alt=""
+            width="300"
+            height="791"
+            class="lateral lateral-izq"
+            aria-hidden="true"
+        />
+        <img
+            src="/imagenes/codigo.png"
+            alt="Novio de traje y novia de vestido largo"
+            width="1402"
+            height="1122"
+            class="siluetas"
+        />
+        <img
+            src="/imagenes/lateral-der.png"
+            alt=""
+            width="300"
+            height="791"
+            class="lateral lateral-der"
+            aria-hidden="true"
+        />
+    </div>
+
+    <p class="etiqueta font-charm">{etiqueta}</p>
+</section>
+
+<style>
+    .vestimenta {
+        --bronce: #8a6a2c;
+        --dorado: #b38d3a;
+
+        width: 100%;
+        max-width: 430px;
+        margin: 0 auto;
+        padding: 2.6rem 1.5rem 2.8rem;
+        text-align: center;
+        color: var(--bronce);
+    }
+
+    .titulo {
+        color: var(--dorado);
+        font-size: clamp(2.3rem, 11vw, 2.9rem);
+        line-height: 1.2;
+        font-weight: 400;
+        /* Great Vibes trae poco aire entre palabras */
+        word-spacing: 0.15em;
+    }
+
+    .adorno {
+        display: block;
+        width: min(58%, 210px);
+        height: auto;
+        margin: 0.4rem auto 0;
+        color: var(--dorado);
+    }
+
+    /*
+       Las siluetas al centro y un ramo a cada lado. Los ramos se salen
+       1.5rem, lo que mide el padding del bloque, para llegar al borde.
+    */
+    .escena {
+        position: relative;
+        margin: 1.6rem -1.5rem 0;
+    }
+
+    .siluetas {
+        display: block;
+        width: 50%;
+        height: auto;
+        margin: 0 auto;
+        filter: drop-shadow(0 4px 6px rgba(122, 90, 34, 0.15));
+    }
+
+    .lateral {
+        position: absolute;
+        top: 50%;
+        width: 16%;
+        height: auto;
+        /* translate y no transform: la animación escribe su propio
+           transform y así no le pisa el centrado */
+        translate: 0 -50%;
+        pointer-events: none;
+    }
+
+    .lateral-izq {
+        left: 0;
+    }
+
+    .lateral-der {
+        right: 0;
+    }
+
+    .etiqueta {
+        margin-top: 1rem;
+        color: var(--dorado);
+        font-size: clamp(1.5rem, 7vw, 1.85rem);
+        line-height: 1.2;
+    }
+</style>
+
+<script>
+    import { entradaConjunta, gestos } from "../scripts/animaciones";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("vestimenta");
+        if (!seccion) return;
+        const $ = (sel: string) => seccion.querySelector(sel);
+
+        // Arriba, todo a la vez: el título se escribe, el adorno se abre,
+        // las siluetas suben y los ramos crecen desde los bordes
+        entradaConjunta(seccion, [
+            [$(".titulo"), gestos.trazo],
+            [$(".adorno"), gestos.abrir],
+            [$(".siluetas"), gestos.subir],
+            [$(".lateral-izq"), gestos.ramo("izq")],
+            [$(".lateral-der"), gestos.ramo("der")],
+        ]);
+
+        // Abajo: la etiqueta se acerca
+        entradaConjunta($(".etiqueta"), [
+            [$(".etiqueta"), gestos.acercar],
+        ]);
+    });
+</script>

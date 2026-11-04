@@ -1,0 +1,270 @@
+---
+// src/components/Pase.astro
+// El pase del invitado, en una tarjeta de papel como las de Ceremonia y
+// Recepción (filo dorado afuera, hilo dorado adentro) con un ramo dorado en
+// la esquina de arriba a la izquierda y otro en la de abajo a la derecha.
+//
+// De arriba a abajo: "Invitación especial para", el nombre del invitado en
+// Great Vibes, el adorno, "Hemos reservado", el número en el círculo de
+// doble filo, la frase del pie y una persona dentro de un círculo dorado.
+//
+// El nombre y el número llegan desde la página. La genérica (/) no pasa
+// nombre: entonces no se dibujan ni la frase de arriba ni el nombre, y el
+// número cae en 1.
+import Adorno from "./Adorno.astro";
+
+interface Props {
+    invitado?: string;
+    pases?: number;
+}
+
+/*
+   MUESTRA DE DISEÑO: mientras la invitación no está conectada al sistema,
+   el pase muestra este nombre y estos pases para ver cómo queda. Al
+   conectarla, volver a `const { invitado, pases = 1 } = Astro.props;`.
+*/
+const { invitado = "Familia Fernández", pases = 2 } = Astro.props;
+
+/*
+   La frase del pie se arma en un solo lugar: repartida en varios archivos,
+   el singular y el plural se desincronizan en cuanto se retoca uno.
+*/
+const piePorPases = (cantidad: number) =>
+    cantidad === 1 ? "pase en su honor" : "pases en su honor";
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const para = "Invitación especial para";
+const reservado = "Hemos reservado";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="pase" class="pase">
+    <div class="tarjeta">
+        <img
+            src="/imagenes/flor4.png"
+            alt=""
+            width="361"
+            height="394"
+            class="flor flor-arriba"
+            aria-hidden="true"
+        />
+        <img
+            src="/imagenes/flor4-abajo.png"
+            alt=""
+            width="361"
+            height="394"
+            class="flor flor-abajo"
+            aria-hidden="true"
+        />
+
+        {
+            invitado && (
+                <>
+                    <p class="para">{para}</p>
+                    <h2 class="invitado font-great-vibes">{invitado}</h2>
+                    <Adorno class="adorno" />
+                </>
+            )
+        }
+
+        <p class="reservado">{reservado}</p>
+
+        <div class="circulo">
+            <span class="numero">{pases}</span>
+        </div>
+
+        <p class="pie">{piePorPases(pases)}</p>
+
+        <span class="sello" aria-hidden="true">
+            <!-- Silueta de persona: cabeza y hombros, en bronce -->
+            <svg class="persona" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4 20.5c0-4.2 3.6-7 8-7s8 2.8 8 7c0 .3-.2.5-.5.5h-15c-.3 0-.5-.2-.5-.5z"></path>
+            </svg>
+        </span>
+    </div>
+</section>
+
+<style>
+    .pase {
+        --bronce: #8a6a2c;
+        --dorado: #b38d3a;
+        --dorado-suave: rgba(179, 141, 58, 0.45);
+
+        width: 100%;
+        max-width: 430px;
+        margin: 0 auto;
+        padding: 2.8rem 0 2.4rem;
+        text-align: center;
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 500;
+        color: var(--bronce);
+    }
+
+    /* La misma tarjeta de papel de Ceremonia y Recepción */
+    .tarjeta {
+        position: relative;
+        z-index: 0;
+        margin: 0 1.9rem;
+        padding: 2.4rem 1.4rem 2rem;
+        border: 1px solid var(--dorado-suave);
+        border-radius: 16px;
+        background-image: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.88) 0%,
+            rgba(250, 244, 230, 0.8) 100%
+        );
+        box-shadow:
+            inset 0 0 0 4px rgba(255, 255, 255, 0.7),
+            inset 0 0 0 5px rgba(179, 141, 58, 0.22),
+            0 12px 28px rgba(122, 90, 34, 0.1);
+    }
+
+    /* Los ramos montados sobre las esquinas, un poco por fuera del filo */
+    .flor {
+        position: absolute;
+        z-index: 2;
+        width: 30%;
+        height: auto;
+        pointer-events: none;
+    }
+
+    .flor-arriba {
+        top: -0.9rem;
+        left: -0.9rem;
+    }
+
+    .flor-abajo {
+        right: -0.9rem;
+        bottom: -0.9rem;
+    }
+
+    .para {
+        position: relative;
+        z-index: 3;
+        color: var(--dorado);
+        font-size: clamp(0.85rem, 3.9vw, 0.98rem);
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        line-height: 1.4;
+    }
+
+    /*
+       El nombre no se fuerza a un solo renglón: "Familia Rodríguez
+       Fernández" baja de línea en lugar de achicarse hasta no leerse.
+    */
+    .invitado {
+        position: relative;
+        z-index: 3;
+        margin-top: 0.4rem;
+        color: var(--bronce);
+        font-size: clamp(2.2rem, 10.5vw, 2.7rem);
+        font-weight: 400;
+        line-height: 1.15;
+        /* Great Vibes trae poco aire entre palabras */
+        word-spacing: 0.15em;
+        overflow-wrap: break-word;
+    }
+
+    .adorno {
+        display: block;
+        width: 9.5rem;
+        height: auto;
+        margin: 0.9rem auto 0;
+        color: var(--dorado);
+    }
+
+    .reservado {
+        margin-top: 1rem;
+        font-size: clamp(1.15rem, 5.2vw, 1.3rem);
+        font-weight: 500;
+        letter-spacing: 0.08em;
+    }
+
+    /*
+       El número en un círculo de papel con doble filo dorado y una sombra
+       corta y clara, como los medallones del resto de la invitación.
+    */
+    .circulo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: clamp(92px, 26vw, 110px);
+        height: clamp(92px, 26vw, 110px);
+        margin: 1rem auto 0;
+        border: 1px solid rgba(179, 141, 58, 0.6);
+        border-radius: 50%;
+        background-image: linear-gradient(180deg, #ffffff 0%, #faf4e6 100%);
+        box-shadow:
+            inset 0 0 0 5px #ffffff,
+            inset 0 0 0 6px rgba(179, 141, 58, 0.35),
+            0 6px 16px rgba(122, 90, 34, 0.12);
+    }
+
+    .numero {
+        color: var(--dorado);
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2.8rem, 13vw, 3.4rem);
+        font-weight: 600;
+        line-height: 1;
+        /* números parejos: en Cormorant algunos bajan de la línea */
+        font-variant-numeric: lining-nums;
+    }
+
+    .pie {
+        margin-top: 0.9rem;
+        color: var(--dorado);
+        font-size: clamp(1.4rem, 6.4vw, 1.65rem);
+        font-style: italic;
+        line-height: 1.3;
+    }
+
+    /* La persona dentro de un círculo con filo dorado, cerrando la tarjeta */
+    .sello {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.6rem;
+        height: 2.6rem;
+        margin: 1rem auto 0;
+        border: 1px solid var(--dorado-suave);
+        border-radius: 50%;
+    }
+
+    .persona {
+        display: block;
+        width: 1.2rem;
+        height: 1.2rem;
+        color: var(--bronce);
+    }
+</style>
+
+<script>
+    import { entradaConjunta, gestos } from "../scripts/animaciones";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("pase");
+        if (!seccion) return;
+        const $ = (sel: string) => seccion.querySelector(sel);
+
+        // Arriba, todo a la vez: los ramos crecen desde su esquina, la
+        // frase baja, el nombre se escribe y el adorno se abre
+        entradaConjunta(seccion, [
+            [$(".flor-arriba"), gestos.crecer],
+            [$(".flor-abajo"), gestos.crecer],
+            [$(".para"), gestos.bajar],
+            [$(".invitado"), gestos.trazo],
+            [$(".adorno"), gestos.abrir],
+        ]);
+
+        // Abajo: el texto baja, el círculo se acerca, el pie sube y la
+        // persona crece
+        entradaConjunta($(".circulo"), [
+            [$(".reservado"), gestos.bajar],
+            [$(".circulo"), gestos.acercar],
+            [$(".pie"), gestos.subir],
+            [$(".sello"), gestos.crecer],
+        ]);
+    });
+</script>
