@@ -1,17 +1,29 @@
 ---
 // src/components/SugerenciaRegalos.astro
-// Sugerencia de regalo, suelta sobre el papel y sin marco: el sobre bronce,
-// el título dorado en Great Vibes, el adorno, la etiqueta y la nota en
-// Charm, y el ramo dorado cerrando abajo.
+// Sugerencia de regalo, suelta sobre el papel: el sobre bronce, el título
+// dorado en Great Vibes y el adorno. Debajo, el texto en Cormorant cursiva,
+// el QR en una tarjeta de papel con filo dorado, el nombre del titular, el
+// botón para descargar el QR, un adorno y la nota de los regalos físicos.
+// Cierra el ramo dorado.
 import Adorno from "./Adorno.astro";
 
 // ── DATOS EDITABLES ───────────────────────────────────────────
 const titulo = "Sugerencia de regalo";
-const etiqueta = "Lluvia de Sobres";
 
-const nota =
-    "El mejor regalo es tenerte con nosotros en este día tan esperado. Y si además deseas hacernos un obsequio, el día de la boda encontrarás sobres a tu disposición para dejarlo con todo cariño.";
+const texto =
+    "Su presencia es nuestro mayor regalo. Pero si desean tener un detalle con nosotros, pueden hacerlo a través del siguiente código QR.";
 
+// El QR va en blanco y negro, tal cual llegó: recolorearlo puede hacer que
+// la app del banco no lo lea
+const qr = "/imagenes/qr.png";
+const tituloTitular = "A nombre de";
+const titular = "Vaca Diez Garcia Mirlen Tatiana";
+const textoBoton = "Descargar QR";
+// Nombre con el que se guarda el archivo al descargarlo
+const archivoDescarga = "QR-Jose-Carlos-y-Mirlen-Tatiana.png";
+
+const regalosFisicos =
+    "También recibiremos con mucho cariño sus obsequios el día del evento.";
 // ──────────────────────────────────────────────────────────────
 ---
 
@@ -23,11 +35,46 @@ const nota =
         aria-hidden="true"></span>
 
     <h2 class="titulo font-great-vibes">{titulo}</h2>
-    <Adorno class="adorno" />
+    <Adorno class="adorno adorno-titulo" />
 
-    <p class="etiqueta font-charm">{etiqueta}</p>
+    <p class="texto">{texto}</p>
 
-    <p class="nota font-charm">{nota}</p>
+    <!-- El QR sobre papel blanco, con el mismo doble filo de las tarjetas -->
+    <div class="tarjeta-qr">
+        <img
+            src={qr}
+            alt="Código QR para transferencias"
+            width="777"
+            height="779"
+            class="qr"
+        />
+    </div>
+
+    <p class="titular-rotulo">{tituloTitular}</p>
+    <p class="titular">{titular}</p>
+
+    <a class="boton" href={qr} download={archivoDescarga}>
+        <!-- Flecha hacia abajo sobre una bandeja -->
+        <svg
+            class="flecha"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M12 4v11"></path>
+            <path d="M7.5 10.5L12 15l4.5-4.5"></path>
+            <path d="M5 19h14"></path>
+        </svg>
+        <span>{textoBoton}</span>
+    </a>
+
+    <Adorno class="adorno adorno-separador" />
+
+    <p class="texto regalos-fisicos">{regalosFisicos}</p>
 
     <img
         src="/imagenes/florseparador.png"
@@ -43,6 +90,7 @@ const nota =
     .regalos {
         --bronce: #8a6a2c;
         --dorado: #b38d3a;
+        --dorado-suave: rgba(179, 141, 58, 0.45);
 
         width: 100%;
         max-width: 430px;
@@ -75,23 +123,100 @@ const nota =
 
     .adorno {
         display: block;
-        width: min(58%, 210px);
         height: auto;
-        margin: 0.4rem auto 0;
         color: var(--dorado);
     }
 
-    .etiqueta {
-        margin-top: 0.9rem;
-        font-size: clamp(1.7rem, 8vw, 2.1rem);
-        line-height: 1.25;
+    .adorno-titulo {
+        width: min(58%, 210px);
+        margin: 0.4rem auto 0;
     }
 
-    .nota {
-        max-width: 18rem;
-        margin: 0.8rem auto 0;
-        font-size: 1.25rem; /* text-xl */
-        line-height: 1.55;
+    /* Cormorant en cursiva: fina y de invitación, más legible que Charm
+       en un párrafo largo */
+    .texto {
+        max-width: 19rem;
+        margin: 1rem auto 0;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.35rem;
+        font-style: italic;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .tarjeta-qr {
+        width: min(62%, 220px);
+        margin: 1.5rem auto 0;
+        padding: 0.8rem;
+        border: 1px solid var(--dorado-suave);
+        border-radius: 14px;
+        background-image: linear-gradient(#ffffff, #ffffff);
+        box-shadow:
+            inset 0 0 0 4px #ffffff,
+            inset 0 0 0 5px rgba(179, 141, 58, 0.22),
+            0 10px 24px rgba(122, 90, 34, 0.12);
+    }
+
+    .qr {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .titular-rotulo {
+        margin-top: 1.1rem;
+        color: var(--dorado);
+        font-family: "Cormorant Garamond", serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .titular {
+        margin-top: 0.2rem;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    /* El mismo botón bronce de "Ver ubicación" y "Confirmar" */
+    .boton {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        margin-top: 1.2rem;
+        padding: 0.65rem 1.6rem;
+        border-radius: 999px;
+        background-color: var(--bronce);
+        box-shadow:
+            inset 0 0 0 2px var(--bronce),
+            inset 0 0 0 3px rgba(216, 196, 155, 0.85),
+            0 8px 18px rgba(122, 90, 34, 0.25);
+        color: #ffffff;
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(0.92rem, 4.3vw, 1.05rem);
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-decoration: none;
+    }
+
+    .flecha {
+        width: 1.15em;
+        height: 1.15em;
+        color: #efe2c2;
+    }
+
+    .adorno-separador {
+        width: min(48%, 180px);
+        margin: 2rem auto 0;
+    }
+
+    .regalos-fisicos {
+        margin-top: 1rem;
     }
 
     .rama {
@@ -111,16 +236,27 @@ const nota =
         const $ = (sel: string) => seccion.querySelector(sel);
 
         // Arriba, todo a la vez: el sobre crece, el título se escribe, el
-        // adorno se abre, la etiqueta llega desde la derecha y la nota sube
+        // adorno se abre y el texto sube
         entradaConjunta(seccion, [
             [$(".icono"), gestos.crecer],
             [$(".titulo"), gestos.trazo],
-            [$(".adorno"), gestos.abrir],
-            [$(".etiqueta"), gestos.desdeDerecha],
-            [$(".nota"), gestos.subir],
+            [$(".adorno-titulo"), gestos.abrir],
+            [$(".texto"), gestos.subir],
         ]);
 
-        // El ramo de abajo crece cuando asoma
-        entradaConjunta($(".rama"), [[$(".rama"), gestos.crecer]]);
+        // El QR se acerca y el nombre y el botón suben con él
+        entradaConjunta($(".tarjeta-qr"), [
+            [$(".tarjeta-qr"), gestos.acercar],
+            [$(".titular-rotulo"), gestos.subir],
+            [$(".titular"), gestos.subir],
+            [$(".boton"), gestos.subir],
+        ]);
+
+        // Abajo: el adorno se abre, la nota sube y el ramo crece
+        entradaConjunta($(".adorno-separador"), [
+            [$(".adorno-separador"), gestos.abrir],
+            [$(".regalos-fisicos"), gestos.subir],
+            [$(".rama"), gestos.crecer],
+        ]);
     });
 </script>

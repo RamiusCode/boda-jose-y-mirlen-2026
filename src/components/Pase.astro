@@ -8,29 +8,19 @@
 // Great Vibes, el adorno, "Hemos reservado", el número en el círculo de
 // doble filo, la frase del pie y una persona dentro de un círculo dorado.
 //
-// El nombre y el número llegan desde la página. La genérica (/) no pasa
-// nombre: entonces no se dibujan ni la frase de arriba ni el nombre, y el
-// número cae en 1.
+// El nombre y el número llegan del panel de invitados: el link trae un
+// código (?i=k7m2p) y el script de abajo los pinta con lo que devuelve la
+// base. Sin código (la genérica) no se muestran ni la frase de arriba ni el
+// nombre, y el número queda en 1.
 import Adorno from "./Adorno.astro";
+import { piePorPases } from "../lib/pases";
 
 interface Props {
     invitado?: string;
     pases?: number;
 }
 
-/*
-   MUESTRA DE DISEÑO: mientras la invitación no está conectada al sistema,
-   el pase muestra este nombre y estos pases para ver cómo queda. Al
-   conectarla, volver a `const { invitado, pases = 1 } = Astro.props;`.
-*/
-const { invitado = "Familia Fernández", pases = 2 } = Astro.props;
-
-/*
-   La frase del pie se arma en un solo lugar: repartida en varios archivos,
-   el singular y el plural se desincronizan en cuanto se retoca uno.
-*/
-const piePorPases = (cantidad: number) =>
-    cantidad === 1 ? "pase en su honor" : "pases en su honor";
+const { invitado, pases = 1 } = Astro.props;
 
 // ── DATOS EDITABLES ───────────────────────────────────────────
 const para = "Invitación especial para";
@@ -57,25 +47,26 @@ const reservado = "Hemos reservado";
             aria-hidden="true"
         />
 
-        {
-            invitado && (
-                <>
-                    <p class="para">{para}</p>
-                    <h2 class="invitado font-great-vibes">{invitado}</h2>
-                    <Adorno class="adorno" />
-                </>
-            )
-        }
+        <!-- Escondidos hasta que haya nombre: lo pone el script con el panel -->
+        <p class="para" id="para-invitado" hidden={!invitado}>{para}</p>
+        <h2
+            class="invitado font-great-vibes"
+            id="nombre-invitado"
+            hidden={!invitado}
+        >
+            {invitado}
+        </h2>
+        <Adorno class="adorno" id="adorno-invitado" hidden={!invitado} />
 
-        <p class="reservado">{reservado}</p>
+        <p class="reservado" id="reservado-pases">{reservado}</p>
 
-        <div class="circulo">
-            <span class="numero">{pases}</span>
+        <div class="circulo" id="circulo-pases">
+            <span class="numero" id="numero-pases">{pases}</span>
         </div>
 
-        <p class="pie">{piePorPases(pases)}</p>
+        <p class="pie" id="palabra-pases">{piePorPases(pases)}</p>
 
-        <span class="sello" aria-hidden="true">
+        <span class="sello" id="sello-pases" aria-hidden="true">
             <!-- Silueta de persona: cabeza y hombros, en bronce -->
             <svg class="persona" viewBox="0 0 24 24" fill="currentColor">
                 <circle cx="12" cy="8" r="4"></circle>
@@ -242,6 +233,46 @@ const reservado = "Hemos reservado";
 
 <script>
     import { entradaConjunta, gestos } from "../scripts/animaciones";
+    import { datosInvitado, alCambiarInvitado } from "../lib/invitado";
+    import type { Invitado } from "../lib/invitado";
+    import { piePorPases } from "../lib/pases";
+
+    // ── DATOS DEL PANEL ───────────────────────────────────────────
+    // El nombre no se achica ni se fuerza a un renglón: si es largo, baja
+    // de línea (lo resuelve el CSS de .invitado).
+    function pintarPase(nombre: string | null, pases: number | null) {
+        if (nombre) {
+            const el = document.getElementById("nombre-invitado");
+            if (el) el.textContent = nombre;
+            for (const id of ["para-invitado", "nombre-invitado", "adorno-invitado"]) {
+                document.getElementById(id)?.removeAttribute("hidden");
+            }
+        }
+        if (typeof pases === "number" && Number.isInteger(pases) && pases > 0) {
+            const num = document.getElementById("numero-pases");
+            const pie = document.getElementById("palabra-pases");
+            if (num) num.textContent = String(pases);
+            if (pie) pie.textContent = piePorPases(pases);
+        }
+    }
+
+    function mostrar(inv: Invitado | null) {
+        if (!inv) return;
+        // Si el panel tiene los pases apagados, la tarjeta queda solo con
+        // el nombre: sin esto mostraría un "1 pase" inventado.
+        const sinPases =
+            (inv.funciones as { pases?: boolean } | undefined)?.pases === false;
+        for (const id of ["reservado-pases", "circulo-pases", "palabra-pases", "sello-pases"]) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = sinPases ? "none" : "";
+        }
+        pintarPase(inv.nombre, sinPases ? null : inv.pases);
+    }
+
+    datosInvitado().then(mostrar);
+    // Si los novios corrigen el nombre o los pases con la página abierta,
+    // la tarjeta se actualiza sola.
+    alCambiarInvitado(mostrar);
 
     document.addEventListener("DOMContentLoaded", () => {
         const seccion = document.getElementById("pase");

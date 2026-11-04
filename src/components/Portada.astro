@@ -4,14 +4,14 @@
 //
 // El sobre son tres imágenes apiladas, en este orden:
 //   1. sobre1.png  — el sobre de atrás (el que abre y marca el alto)
-//   2. foto1.jpg   — la foto, que sale desde adentro del sobre
+//   2. novios-portada.jpg — la foto, que sale desde adentro del sobre
 //   3. sobre2.png  — la tapa de adelante con el sello, que la tapa abajo
 //
 // Se toca el sobre: arranca la música y se abre la invitación.
 //
-// El nombre del invitado llega desde la página: las personalizadas
-// (/[slug]) lo pasan tal cual está escrito en lista.txt, y la genérica (/)
-// no lo pasa, así que esa línea directamente no se dibuja.
+// El nombre del invitado llega del panel de invitados: el link trae un
+// código (?i=k7m2p) y el script de abajo lo pinta. Sin código (la genérica)
+// la línea queda escondida.
 import Adorno from "./Adorno.astro";
 
 interface Props {
@@ -97,13 +97,14 @@ const textoSobre2 = "abrir tu invitación";
 
             <p id="fecha" class="fecha font-simonetta">{fecha}</p>
 
-            {
-                invitado && (
-                    <p id="invitado-portada" class="invitado font-simonetta">
-                        {invitado}
-                    </p>
-                )
-            }
+            <!-- Escondido hasta que haya nombre: lo pone el script con el panel -->
+            <p
+                id="invitado-portada"
+                class="invitado font-simonetta"
+                hidden={!invitado}
+            >
+                {invitado}
+            </p>
 
             <!-- EL SOBRE: sobre1 (atrás) + foto1 (sale) + sobre2 (adelante) -->
             <div id="sobre-container" class="sobre-container">
@@ -119,7 +120,7 @@ const textoSobre2 = "abrir tu invitación";
                 <!-- El recorte esconde la foto por debajo del borde del sobre -->
                 <div class="foto-recorte">
                     <div id="foto-sobre" class="foto-sobre">
-                        <img src="/imagenes/foto1.jpg" alt="Los novios" />
+                        <img src="/imagenes/novios-portada.jpg" alt="Los novios" />
                     </div>
                 </div>
 
@@ -411,6 +412,20 @@ const textoSobre2 = "abrir tu invitación";
 
 <script>
     import { gsap } from "gsap";
+    import { datosInvitado, alCambiarInvitado } from "../lib/invitado";
+    import type { Invitado } from "../lib/invitado";
+
+    // El nombre del panel en la portada. Si los novios lo corrigen con la
+    // página abierta, se actualiza solo.
+    function nombreEnPortada(inv: Invitado | null) {
+        if (!inv || !inv.nombre) return;
+        const el = document.getElementById("invitado-portada");
+        if (!el) return;
+        el.textContent = inv.nombre;
+        el.removeAttribute("hidden");
+    }
+    datosInvitado().then(nombreEnPortada);
+    alCambiarInvitado(nombreEnPortada);
 
     if (typeof window !== "undefined") {
         document.addEventListener("DOMContentLoaded", () => {

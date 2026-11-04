@@ -14,7 +14,10 @@ import NombresPadres from "./NombresPadres.astro";
 import NombresFlores from "./NombresFlores.astro";
 import Fecha from "./Fecha.astro";
 import Foto1 from "./Foto1.astro";
-import Foto2 from "./Foto2.astro";
+// Foto2 queda guardada para más adelante: esta pareja mandó 4 fotos y no
+// alcanzó para su lugar. Para usarla, poner su foto en Foto2.astro y
+// descomentar este import y <Foto2 /> más abajo.
+// import Foto2 from "./Foto2.astro";
 import Foto3 from "./Foto3.astro";
 import DireccionCeremonia from "./DireccionCeremonia.astro";
 import CeremoniaCivil from "./CeremoniaCivil.astro";
@@ -45,7 +48,7 @@ const { invitado, pases } = Astro.props;
     <Fecha />
     <Foto1 />
     <NombresPadres />
-    <Foto2 />
+    {/* <Foto2 /> */}
     <DireccionCeremonia />
     <CeremoniaCivil />
     <Cronograma />
