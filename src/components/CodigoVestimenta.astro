@@ -125,10 +125,17 @@ const notaDespues = "es exclusivo para la novia";
         line-height: 1.2;
     }
 
-    /* Aviso del blanco: Cormorant cursiva, con la palabra en bronce firme */
+    /* Aviso del blanco: Cormorant cursiva, con la palabra en bronce firme,
+       dentro de un trazo dorado fino con doble filo, como las tarjetas */
     .nota {
-        max-width: 18rem;
-        margin: 0.8rem auto 0;
+        max-width: 19rem;
+        margin: 1rem auto 0;
+        padding: 0.7rem 1.1rem;
+        border: 1px solid rgba(179, 141, 58, 0.6);
+        border-radius: 12px;
+        box-shadow:
+            inset 0 0 0 3px rgba(255, 255, 255, 0.6),
+            inset 0 0 0 4px rgba(179, 141, 58, 0.25);
         font-family: "Cormorant Garamond", serif;
         font-size: 1.3rem;
         font-style: italic;
