@@ -8,6 +8,10 @@ import Adorno from "./Adorno.astro";
 // ── DATOS EDITABLES ───────────────────────────────────────────
 const titulo = "Código de vestimenta";
 const etiqueta = "Formal - Elegante";
+// La nota resalta la palabra entre los dos tramos
+const notaAntes = "El color";
+const notaResaltada = "blanco";
+const notaDespues = "es exclusivo para la novia";
 // ──────────────────────────────────────────────────────────────
 ---
 
@@ -42,6 +46,10 @@ const etiqueta = "Formal - Elegante";
     </div>
 
     <p class="etiqueta font-charm">{etiqueta}</p>
+    <p class="nota">
+        {notaAntes} <strong class="resaltado">{notaResaltada}</strong>
+        {notaDespues}
+    </p>
 </section>
 
 <style>
@@ -116,6 +124,25 @@ const etiqueta = "Formal - Elegante";
         font-size: clamp(1.5rem, 7vw, 1.85rem);
         line-height: 1.2;
     }
+
+    /* Aviso del blanco: Cormorant cursiva, con la palabra en bronce firme */
+    .nota {
+        max-width: 18rem;
+        margin: 0.8rem auto 0;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.3rem;
+        font-style: italic;
+        font-weight: 500;
+        line-height: 1.45;
+    }
+
+    .resaltado {
+        color: var(--bronce);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-style: normal;
+    }
 </style>
 
 <script>
@@ -136,9 +163,10 @@ const etiqueta = "Formal - Elegante";
             [$(".lateral-der"), gestos.ramo("der")],
         ]);
 
-        // Abajo: la etiqueta se acerca
+        // Abajo: la etiqueta se acerca y la nota del blanco sube
         entradaConjunta($(".etiqueta"), [
             [$(".etiqueta"), gestos.acercar],
+            [$(".nota"), gestos.subir],
         ]);
     });
 </script>
